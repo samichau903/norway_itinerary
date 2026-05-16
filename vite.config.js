@@ -2,6 +2,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  base: '/norway_itinerary/',
   plugins: [tailwindcss()],
   server: {
     port: 3000,

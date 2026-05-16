@@ -1,0 +1,6 @@
+{
+  "name": "Norway Explorer 2026",
+  "description": "A comprehensive 11-day interactive itinerary for a 6-person group traveling through Oslo, Flåm, Bergen, and Tromsø in May-June 2026.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

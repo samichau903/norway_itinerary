@@ -871,11 +871,15 @@ const renderSidebar = () => {
 
   return `
     <div class="p-10">
-      <div class="flex items-center gap-3 mb-2">
-        <i data-lucide="compass" class="w-5 h-5 text-[#d97706]"></i>
-        <h1 class="text-xl font-serif font-semibold tracking-tight text-[#1d1c1a]">Norway Journey</h1>
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-12 h-12 bg-[#1d1c1a] rounded-2xl flex items-center justify-center shadow-lg transform -rotate-6">
+          <i data-lucide="compass" class="w-6 h-6 text-[#d97706]"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-serif font-bold tracking-tight text-[#1d1c1a] leading-none">NORWAY</h1>
+          <p class="text-[9px] text-[#d97706] font-bold uppercase tracking-[0.3em] mt-1">Journey 2026</p>
+        </div>
       </div>
-      <p class="text-[10px] text-zinc-500 font-medium uppercase tracking-[0.2em] ml-8">May – June 2026</p>
     </div>
 
     <nav class="mt-4 px-6 space-y-1 overflow-y-auto max-h-[calc(100vh-14rem)] scrollbar-hide pb-20">
@@ -947,7 +951,10 @@ const updateUI = () => {
           <button onclick="toggleSidebar()" class="p-2 -ml-2 text-zinc-600">
             <i data-lucide="menu" class="w-6 h-6"></i>
           </button>
-          <span class="text-sm font-serif font-semibold text-[#1d1c1a]">Norway Journey</span>
+          <div class="flex items-center gap-2">
+            <i data-lucide="compass" class="w-4 h-4 text-[#d97706]"></i>
+            <span class="text-xs font-serif font-bold tracking-widest text-[#1d1c1a]">NORWAY 2026</span>
+          </div>
           <div class="w-6"></div>
         </header>
 

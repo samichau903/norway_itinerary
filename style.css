@@ -40,6 +40,40 @@
   animation: fadeIn 0.4s ease-out forwards;
 }
 
+@media print {
+  #interactive-app {
+    display: none !important;
+  }
+
+  body, html {
+    background: white !important;
+    height: auto !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  #app {
+    display: block !important;
+    overflow: visible !important;
+  }
+
+  #print-view {
+    display: block !important;
+    visibility: visible !important;
+    position: static !important;
+    width: 100% !important;
+  }
+
+  .page-break-before {
+    page-break-before: always;
+  }
+
+  .grid {
+    display: block !important;
+  }
+}
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }

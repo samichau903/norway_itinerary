@@ -16,7 +16,8 @@ import {
   ExternalLink,
   Menu,
   X,
-  Compass 
+  Compass,
+  Printer
 } from 'lucide';
 
 // --- DATA ---
@@ -459,6 +460,87 @@ const getIconColor = (type) => {
 };
 
 // --- RENDER FUNCTIONS ---
+const renderFullItineraryForPrint = () => {
+  const groupedDays = groupDaysByLocation();
+  
+  return `
+    <div class="print-content space-y-12 p-8 bg-white text-black font-sans">
+      <div class="border-b-2 border-black pb-8 mb-12">
+        <h1 class="text-5xl font-serif mb-4">${itineraryData.title}</h1>
+        <div class="flex gap-8 text-sm uppercase tracking-widest font-bold">
+          <span>${itineraryData.dates}</span>
+          <span>${itineraryData.groupSize} Members</span>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <h2 class="text-xl uppercase tracking-widest font-bold border-b border-gray-300 pb-2">Essential Tips</h2>
+        <div class="grid grid-cols-2 gap-8">
+          ${itineraryData.tips.map(tip => `
+            <div>
+              <h3 class="text-sm font-bold uppercase mb-1">${tip.title}</h3>
+              <p class="text-xs text-gray-600 leading-relaxed font-serif italic">${tip.content}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="space-y-16 pt-12">
+        ${itineraryData.days.map((day, dIdx) => `
+          <div class="${dIdx > 0 ? 'page-break-before' : ''}">
+            <div class="flex items-baseline justify-between border-b-2 border-gray-200 pb-4 mb-8">
+              <h2 class="text-4xl font-serif">Day ${day.day}: ${day.location}</h2>
+              <span class="text-sm font-bold text-gray-400 font-mono">${day.date}</span>
+            </div>
+            
+            <div class="bg-gray-50 p-6 rounded-xl mb-8 border border-gray-100">
+              <p class="text-lg font-serif italic">"${day.summary}"</p>
+            </div>
+
+            <div class="space-y-8">
+              ${day.activities.map((activity, aIdx) => `
+                <div class="grid grid-cols-[80px_1fr] gap-6 pb-6 border-b border-gray-100 last:border-0">
+                  <span class="font-mono font-bold text-xs pt-1">${activity.time}</span>
+                  <div>
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="text-[8px] uppercase tracking-widest font-bold text-gray-400 border px-1.5 py-0.5 rounded">${activity.type}</span>
+                      <h3 class="text-xl font-serif font-bold text-black">${activity.title}</h3>
+                    </div>
+                    <p class="text-sm text-gray-600 font-serif italic mb-4">${activity.description}</p>
+                    
+                    ${activity.splitGroup ? `
+                      <div class="grid grid-cols-2 gap-4 mt-4">
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                           <span class="text-[7px] font-bold uppercase block mb-1">Scenic (悠遊組)</span>
+                           <p class="text-[11px] font-serif italic">${activity.splitGroup.groupB}</p>
+                        </div>
+                        <div class="p-4 bg-gray-100 rounded-lg border border-gray-200">
+                           <span class="text-[7px] font-bold uppercase block mb-1">Active (挑戰組)</span>
+                           <p class="text-[11px] font-serif italic">${activity.splitGroup.groupA}</p>
+                        </div>
+                      </div>
+                    ` : ''}
+
+                    ${activity.longDescription ? `
+                      <div class="mt-4 p-4 border-l-2 border-gray-200">
+                        <p class="text-[11px] leading-relaxed text-gray-700">${activity.longDescription}</p>
+                      </div>
+                    ` : ''}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="pt-8 border-t border-black text-center text-[10px] uppercase tracking-widest text-gray-400">
+        Generated for the Norwegian Journey · 2026
+      </div>
+    </div>
+  `;
+};
+
 const renderActivityCard = (activity, index, isLast) => {
   const isExpanded = expandedActivities.has(`${selectedDayIndex}-${index}`);
   const showDetails = detailedActivities.has(`${selectedDayIndex}-${index}`);
@@ -672,12 +754,21 @@ const renderOverview = () => {
         </div>
       </div>
       
-      <button 
-        onclick="enterItinerary()"
-        class="group px-12 py-5 bg-[#1d1c1a] text-white rounded-full text-xs font-semibold uppercase tracking-[0.2em] hover:bg-[#d97706] transition-all flex items-center gap-4 shadow-xl shadow-[#1d1c1a]/10"
-      >
-        Enter Itinerary <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
-      </button>
+        <div class="flex flex-col sm:flex-row gap-4 mt-12">
+          <button 
+            onclick="enterItinerary()"
+            class="group px-12 py-5 bg-[#1d1c1a] text-white rounded-full text-xs font-semibold uppercase tracking-[0.2em] hover:bg-[#d97706] transition-all flex items-center gap-4 shadow-xl shadow-[#1d1c1a]/10"
+          >
+            Enter Itinerary <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+          </button>
+          
+          <button 
+            onclick="saveAsPdf()"
+            class="group px-12 py-5 bg-white border border-[#e5e2db] text-[#1d1c1a] rounded-full text-xs font-semibold uppercase tracking-[0.2em] hover:border-[#1d1c1a] transition-all flex items-center gap-4"
+          >
+            <i data-lucide="printer" class="w-4 h-4"></i> Save as PDF
+          </button>
+        </div>
     </div>
   `;
 };
@@ -739,6 +830,13 @@ const renderDayView = () => {
         </div>
 
         <div class="flex items-center gap-4">
+          <button 
+            onclick="saveAsPdf()"
+            class="flex items-center gap-3 px-6 py-3 rounded-full border border-[#e5e2db] text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-[#1d1c1a] hover:border-[#1d1c1a] transition-all"
+          >
+            <i data-lucide="printer" class="w-4 h-4"></i>
+          </button>
+
           ${selectedDayIndex > 0 ? `
             <button onclick="prevDay()" class="group flex items-center gap-3 px-6 py-3 rounded-full border border-[#e5e2db] text-xs font-bold uppercase tracking-widest text-[#1d1c1a] hover:bg-[#e8e6e1] transition-all">
               <i data-lucide="chevron-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
@@ -839,7 +937,7 @@ const updateUI = () => {
   const currentDay = itineraryData.days[selectedDayIndex];
 
   app.innerHTML = `
-    <div class="min-h-screen bg-[#fbfaf8] text-[#1d1c1a] font-sans flex overflow-hidden">
+    <div id="interactive-app" class="min-h-screen bg-[#fbfaf8] text-[#1d1c1a] font-sans flex overflow-hidden">
       <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-[#f3f2ee] border-r border-[#e5e2db] transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}">
         ${renderSidebar()}
       </aside>
@@ -872,6 +970,9 @@ const updateUI = () => {
         </div>
       </main>
     </div>
+    <div id="print-view" class="hidden">
+      ${renderFullItineraryForPrint()}
+    </div>
   `;
 
   createIcons({
@@ -891,7 +992,8 @@ const updateUI = () => {
       ExternalLink,
       Menu,
       X,
-      Compass 
+      Compass,
+      Printer
     }
   });
 };
@@ -962,6 +1064,10 @@ window.toggleDetails = (index) => {
     detailedActivities.add(key);
   }
   updateUI();
+};
+
+window.saveAsPdf = () => {
+  window.print();
 };
 
 // --- INITIALIZATION ---
